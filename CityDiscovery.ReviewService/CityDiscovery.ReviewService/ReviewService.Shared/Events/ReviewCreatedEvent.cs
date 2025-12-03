@@ -6,6 +6,12 @@
         public Guid VenueId { get; set; }
         public Guid UserId { get; set; }
         public int Rating { get; set; }
-        public DateTime CreatedDate { get; set; }
+
+        // Eksik olan alanlar eklendi:
+        public string Comment { get; set; }
+        public Guid VenueOwnerId { get; set; }
+
+        // Handler'da "CreatedAt" olarak kullanıldığı için isim güncellendi:
+        public DateTime CreatedAt { get; set; }
     }
 }

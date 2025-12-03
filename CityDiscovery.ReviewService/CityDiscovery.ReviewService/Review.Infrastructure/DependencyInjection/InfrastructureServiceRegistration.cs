@@ -8,6 +8,8 @@ using CityDiscovery.ReviewService.Review.Infrastructure.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CityDiscovery.ReviewService.Infrastructure.MessageBus.Consumers;
+using MassTransit;
 
 namespace CityDiscovery.ReviewService.Infrastructure.DependencyInjection;
 
@@ -45,6 +47,27 @@ public static class InfrastructureServiceRegistration
             {
                 client.BaseAddress = new Uri(configuration["Services:Venue"]);
             });
+        // --- MASSTRANSIT AYARLARI ---
+        services.AddMassTransit(x =>
+        {
+            // Yeni namespace altındaki Consumer'ı ekliyoruz
+            x.AddConsumer<VenueDeletedConsumer>();
+            x.AddConsumer<UserDeletedConsumer>(); 
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                var host = configuration["RabbitMQ:Host"] ?? "localhost";
+                var user = configuration["RabbitMQ:Username"] ?? "guest";
+                var pass = configuration["RabbitMQ:Password"] ?? "guest";
+
+                cfg.Host(host, h =>
+                {
+                    h.Username(user);
+                    h.Password(pass);
+                });
+
+                cfg.ConfigureEndpoints(context);
+            });
+        });
 
         return services;
     }

@@ -1,7 +1,5 @@
 ﻿using CityDiscovery.ReviewService.Application.Interfaces;
-using System.Net.Http;
-using System.Net.Http.Json;
-
+using CityDiscovery.ReviewService.Review.Application.DTOs;
 namespace CityDiscovery.ReviewService.Infrastructure.ExternalServices;
 
 public class VenueServiceClient : IVenueServiceClient
@@ -30,5 +28,17 @@ public class VenueServiceClient : IVenueServiceClient
         response.EnsureSuccessStatusCode();
 
         return await response.Content.ReadFromJsonAsync<Guid>(cancellationToken: cancellationToken);
+    }
+    public async Task<VenueDto?> GetVenueAsync(Guid venueId, CancellationToken cancellationToken = default)
+    {
+        // Venue Service'in GET /api/venues/{id} endpoint'ine istek atıyoruz
+        var response = await _httpClient.GetAsync($"/api/venues/{venueId}", cancellationToken);
+
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            return null;
+
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<VenueDto>(cancellationToken: cancellationToken);
     }
 }

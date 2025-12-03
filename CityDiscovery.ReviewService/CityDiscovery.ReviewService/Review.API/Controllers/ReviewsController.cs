@@ -1,8 +1,9 @@
-﻿using CityDiscovery.ReviewService.Application.DTOs;
+﻿using CityDiscovery.ReviewService.API.Models.Requests; // <--- Bu satırı ekleyin
+using CityDiscovery.ReviewService.Application.DTOs;
 using CityDiscovery.ReviewService.Application.Reviews.Commands.CreateReview;
 using CityDiscovery.ReviewService.Application.Reviews.Queries.GetVenueRatingSummary;
 using CityDiscovery.ReviewService.Application.Reviews.Queries.GetVenueReviews;
-using CityDiscovery.ReviewService.API.Models.Requests; // <--- Bu satırı ekleyin
+using CityDiscovery.ReviewService.Application.Reviews.Queries.HasUserReviewed;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -59,6 +60,15 @@ public class ReviewsController : ControllerBase
     public async Task<ActionResult<VenueRatingSummaryDto>> GetVenueRatingSummary(Guid venueId)
     {
         var result = await _mediator.Send(new GetVenueRatingSummaryQuery { VenueId = venueId });
+        return Ok(result);
+    }
+
+    // GET /api/reviews/user/{userId}/has-reviewed/{venueId}
+    [HttpGet("user/{userId:guid}/has-reviewed/{venueId:guid}")]
+    [AllowAnonymous] // Veya [Authorize] duruma göre
+    public async Task<ActionResult<bool>> HasUserReviewed(Guid userId, Guid venueId)
+    {
+        var result = await _mediator.Send(new HasUserReviewedQuery { UserId = userId, VenueId = venueId });
         return Ok(result);
     }
 }
