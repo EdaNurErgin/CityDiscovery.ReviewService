@@ -13,13 +13,31 @@ namespace CityDiscovery.ReviewService
             builder.Services.AddReviewApplication(builder.Configuration);
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-
-            
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Review Service API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "CityDiscovery Review Service API",
+                    Version = "v1",
+                    Description = "Mekan yorumlar? ve favori i?lemleri için Review Service API dokümantasyonu.",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "CityDiscovery Team"
+                    }
+                });
 
-                // JWT Kilidi (Authorize butonu) için gerekli ayar
+                // XML Dokümantasyonunu Dahil Et
+                var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                if (File.Exists(xmlPath))
+                {
+                    c.IncludeXmlComments(xmlPath);
+                }
+
+                // Annotation'lar? aktif et (SwaggerOperation vb. için)
+                c.EnableAnnotations();
+
+                // JWT Güvenlik Tan?m?
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -27,7 +45,7 @@ namespace CityDiscovery.ReviewService
                     Scheme = "bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme."
+                    Description = "JWT Authorization header using the Bearer scheme. Sadece token'? yap??t?r?n."
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -45,7 +63,8 @@ namespace CityDiscovery.ReviewService
                     }
                 });
             });
-            
+
+
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();

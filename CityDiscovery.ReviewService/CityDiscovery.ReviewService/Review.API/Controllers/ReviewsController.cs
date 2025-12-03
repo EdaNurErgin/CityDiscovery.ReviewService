@@ -7,9 +7,13 @@ using CityDiscovery.ReviewService.Application.Reviews.Queries.HasUserReviewed;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace CityDiscovery.ReviewService.API.Controllers;
 
+/// <summary>
+/// Yorum yönetim endpoint'leri
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ReviewsController : ControllerBase
@@ -21,9 +25,31 @@ public class ReviewsController : ControllerBase
         _mediator = mediator;
     }
 
-    // POST /api/reviews
+    /// <summary>
+    /// Mekana yeni yorum ekler
+    /// </summary>
+    /// <param name="request">Yorum bilgileri</param>
+    /// <returns>Oluşturulan yorumun ID'si</returns>
+    /// <response code="201">Başarılı - Yorum oluşturuldu</response>
+    /// <response code="400">Geçersiz istek veya kullanıcı daha önce yorum yapmış</response>
+    /// <response code="401">Yetkisiz erişim</response>
+    /// <remarks>
+    /// Örnek istek:
+    /// 
+    /// POST /api/Reviews
+    /// {
+    ///   "venueId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    ///   "rating": 5,
+    ///   "comment": "Harika bir atmosferi vardı, kahveleri çok taze."
+    /// }
+    /// </remarks>
+
     [HttpPost]
     [Authorize]
+    [SwaggerOperation(Summary = "Mekana yorum ekler", Description = "Giriş yapmış kullanıcı bir mekana yorum ve puan ekler.")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] CreateReviewRequest request)
     {
         // Token'dan UserId'yi al (JwtConfiguration sayesinde HttpContext.Items'da var)
@@ -45,27 +71,44 @@ public class ReviewsController : ControllerBase
         return Unauthorized("User ID could not be retrieved from token.");
     }
 
-    // GET /api/reviews/venue/{venueId}
+    /// <summary>
+    /// Bir mekanın yorumlarını listeler
+    /// </summary>
+    /// <param name="venueId">Mekan ID</param>
+    /// <returns>Yorum listesi</returns>
+    /// <response code="200">Başarılı - Yorum listesi döner</response>
     [HttpGet("venue/{venueId:guid}")]
     [AllowAnonymous]
+    [ProducesResponseType(typeof(List<ReviewDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<ReviewDto>>> GetVenueReviews(Guid venueId)
     {
         var result = await _mediator.Send(new GetVenueReviewsQuery { VenueId = venueId });
         return Ok(result);
     }
 
-    // GET /api/reviews/venue/{venueId}/summary
+    /// <summary>
+    /// Mekanın puan özetini (ortalama puan, toplam yorum) getirir
+    /// </summary>
+    /// <param name="venueId">Mekan ID</param>
+    /// <returns>Puan özeti</returns>
     [HttpGet("venue/{venueId:guid}/summary")]
     [AllowAnonymous]
+    [ProducesResponseType(typeof(VenueRatingSummaryDto), StatusCodes.Status200OK)]
     public async Task<ActionResult<VenueRatingSummaryDto>> GetVenueRatingSummary(Guid venueId)
     {
         var result = await _mediator.Send(new GetVenueRatingSummaryQuery { VenueId = venueId });
         return Ok(result);
     }
 
-    // GET /api/reviews/user/{userId}/has-reviewed/{venueId}
+    /// <summary>
+    /// Kullanıcının mekana yorum yapıp yapmadığını kontrol eder
+    /// </summary>
+    /// <param name="userId">Kullanıcı ID</param>
+    /// <param name="venueId">Mekan ID</param>
+    /// <returns>True/False</returns>
     [HttpGet("user/{userId:guid}/has-reviewed/{venueId:guid}")]
-    [AllowAnonymous] // Veya [Authorize] duruma göre
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     public async Task<ActionResult<bool>> HasUserReviewed(Guid userId, Guid venueId)
     {
         var result = await _mediator.Send(new HasUserReviewedQuery { UserId = userId, VenueId = venueId });
