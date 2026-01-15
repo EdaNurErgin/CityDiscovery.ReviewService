@@ -66,7 +66,7 @@ namespace CityDiscovery.ReviewService
 
 
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddHttpContextAccessor();
             // Health Checks
             builder.Services.AddHealthChecks();
 

@@ -40,4 +40,53 @@ public class ReviewRepository : IReviewRepository
         _context.Reviews.Update(review);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task UpdateReviewerDetailsAsync(Guid userId, string newUserName, string newAvatarUrl)
+    {
+        // Bu kullanıcının yaptığı tüm yorumları bul
+        var reviews = await _context.Reviews
+            .Where(r => r.UserId == userId)
+            .ToListAsync();
+
+        if (reviews.Any())
+        {
+            foreach (var review in reviews)
+            {
+                // Review entity'nizde bu alanlar varsa güncelle:
+                // review.ReviewerUserName = newUserName;
+                // review.ReviewerAvatarUrl = newAvatarUrl;
+
+                // Not: Eğer Review entity'nizde henüz bu kolonlar yoksa,
+                // önce Review.cs entity'sine ekleyip Migration almanız gerekir.
+            }
+
+            await _context.SaveChangesAsync();
+        }
+    }
+    // İçine ekle:
+    public void Remove(Reviewx review)
+    {
+        _context.Reviews.Remove(review);
+    }
+
+    // Ortalama hesaplama metodu (Handler'da kullandık):
+    public async Task<(double AverageRating, int ReviewCount)> GetVenueRatingStatsAsync(Guid venueId, CancellationToken cancellationToken)
+    {
+        var stats = await _context.Reviews
+            .Where(r => r.VenueId == venueId)
+            .GroupBy(r => r.VenueId)
+            .Select(g => new
+            {
+                Count = g.Count(),
+                Avg = g.Average(r => r.Rating)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return (stats?.Avg ?? 0, stats?.Count ?? 0);
+    }
+
+    public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return _context.SaveChangesAsync(cancellationToken);
+    }
 }

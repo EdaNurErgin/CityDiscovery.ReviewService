@@ -52,7 +52,9 @@ public static class InfrastructureServiceRegistration
         {
             // Yeni namespace altındaki Consumer'ı ekliyoruz
             x.AddConsumer<VenueDeletedConsumer>();
-            x.AddConsumer<UserDeletedConsumer>(); 
+            x.AddConsumer<UserDeletedConsumer>();
+            x.AddConsumer<UserUpdatedConsumer>();
+
             x.UsingRabbitMq((context, cfg) =>
             {
                 var host = configuration["RabbitMQ:Host"] ?? "localhost";
