@@ -3,7 +3,7 @@ using CityDiscovery.ReviewService.Domain.Entities;
 using CityDiscovery.ReviewService.Domain.Interfaces;
 using CityDiscovery.ReviewService.Review.Application.Interfaces;
 using CityDiscovery.ReviewService.Shared.Events;
-using MassTransit; 
+using MassTransit;
 using MediatR;
 
 namespace CityDiscovery.ReviewService.Application.Reviews.Commands.CreateReview;
@@ -28,31 +28,23 @@ public sealed class CreateReviewCommandHandler
         _publishEndpoint = publishEndpoint;
     }
 
-
     public async Task<Guid> Handle(CreateReviewCommand request, CancellationToken cancellationToken)
     {
         if (request.UserId == Guid.Empty)
             throw new InvalidOperationException("UserId is required.");
 
-        var userExists = await _identityClient.CheckUserExistsAsync(request.UserId, cancellationToken);
-        if (!userExists)
+
+        var userDto = await _identityClient.GetUserAsync(request.UserId, cancellationToken);
+        if (userDto == null)
             throw new InvalidOperationException("User not found.");
+     
 
-        // --- DEĞİŞİKLİK BAŞLANGIÇ ---
-        // ESKİ YÖNTEM:
-        // var venueExists = await _venueClient.CheckVenueExistsAsync(...)
-        // var ownerId = await _venueClient.GetVenueOwnerIdAsync(...)
-
-        // YENİ YÖNTEM (GetVenueAsync ile Tek Seferde):
         var venue = await _venueClient.GetVenueAsync(request.VenueId, cancellationToken);
 
-        // 1. Mekan kontrolü
         if (venue == null)
             throw new InvalidOperationException("Venue not found.");
 
-        // 2. Owner verisini DTO içinden alıyoruz
         var ownerId = venue.OwnerUserId;
-        // --- DEĞİŞİKLİK BİTİŞ ---
 
         if (ownerId == request.UserId)
             throw new InvalidOperationException("Owner cannot review own venue.");
@@ -63,7 +55,17 @@ public sealed class CreateReviewCommandHandler
         if (existing is not null)
             throw new InvalidOperationException("User has already reviewed this venue.");
 
-        var review = new Reviewx(request.VenueId, request.UserId, request.Rating, request.Comment);
+
+        // YENİSİ (Entity'deki yeni constructor'a uygun olarak):
+        var review = new Reviewx(
+            request.VenueId,
+            request.UserId,
+            request.Rating,
+            request.Comment,
+            userDto.UserName,                // Identity Service'den gelen kullanıcı adı
+            userDto.ProfilePictureUrl        // Identity Service'den gelen profil fotosu (DTO'daki isim UserDto dosyasına göre değişebilir, genelde AvatarUrl veya ProfilePictureUrl'dir)
+        );
+
 
         await _reviewRepository.AddAsync(review, cancellationToken);
 

@@ -66,7 +66,7 @@ namespace CityDiscovery.ReviewService
 
 
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddHttpContextAccessor();
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
