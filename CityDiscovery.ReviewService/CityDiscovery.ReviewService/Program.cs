@@ -1,4 +1,4 @@
-using CityDiscovery.ReviewService.Application.DependencyInjection;
+ï»¿using CityDiscovery.ReviewService.Application.DependencyInjection;
 using CityDiscovery.ReviewService.Infrastructure.DependencyInjection;
 using Microsoft.OpenApi.Models;
 namespace CityDiscovery.ReviewService
@@ -19,14 +19,14 @@ namespace CityDiscovery.ReviewService
                 {
                     Title = "CityDiscovery Review Service API",
                     Version = "v1",
-                    Description = "Mekan yorumlar? ve favori i?lemleri için Review Service API dokümantasyonu.",
+                    Description = "Mekan yorumlar? ve favori i?lemleri iÃ§in Review Service API dokÃ¼mantasyonu.",
                     Contact = new OpenApiContact
                     {
                         Name = "CityDiscovery Team"
                     }
                 });
 
-                // XML Dokümantasyonunu Dahil Et
+                // XML DokÃ¼mantasyonunu Dahil Et
                 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 if (File.Exists(xmlPath))
@@ -34,10 +34,10 @@ namespace CityDiscovery.ReviewService
                     c.IncludeXmlComments(xmlPath);
                 }
 
-                // Annotation'lar? aktif et (SwaggerOperation vb. için)
+                // Annotation'lar? aktif et (SwaggerOperation vb. iÃ§in)
                 c.EnableAnnotations();
 
-                // JWT Güvenlik Tan?m?
+                // JWT GÃ¼venlik Tan?m?
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -67,6 +67,9 @@ namespace CityDiscovery.ReviewService
 
             builder.Services.AddSwaggerGen();
 
+            // Health Checks
+            builder.Services.AddHealthChecks();
+
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())
@@ -80,9 +83,13 @@ namespace CityDiscovery.ReviewService
             app.UseAuthorization();
 
 
+            // Health Check Endpoint
+            app.MapHealthChecks("/health");
+
             app.MapControllers();
 
             app.Run();
         }
     }
 }
+
