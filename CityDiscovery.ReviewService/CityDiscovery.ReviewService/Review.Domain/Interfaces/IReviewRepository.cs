@@ -14,4 +14,7 @@ public interface IReviewRepository
     void Remove(Reviewx review); // Veya Reviewx, entity adın neyse
     Task<(double AverageRating, int ReviewCount)> GetVenueRatingStatsAsync(Guid venueId, CancellationToken cancellationToken);
     Task SaveChangesAsync(CancellationToken cancellationToken);
+    Task DeleteReviewsByVenueAsync(Guid venueId, CancellationToken cancellationToken = default);
+
+
 }

@@ -1,5 +1,4 @@
-﻿
-namespace CityDiscovery.ReviewService.Shared.Events
+﻿namespace CityDiscovery.ReviewService.ReviewService.Shared.Events.Identity
 {
     public class UserDeletedEvent
     {

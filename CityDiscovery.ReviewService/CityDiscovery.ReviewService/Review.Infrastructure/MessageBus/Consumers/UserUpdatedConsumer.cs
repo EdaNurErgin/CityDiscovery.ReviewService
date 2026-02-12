@@ -1,6 +1,6 @@
 ﻿using CityDiscovery.ReviewService.Application.Interfaces;
 using CityDiscovery.ReviewService.Domain.Interfaces;
-using CityDiscovery.ReviewService.Shared.Events; // Identity'den gelen event (Shared referansı)
+using CityDiscovery.ReviewService.ReviewService.Shared.Events.Identity;
 using MassTransit;
 
 namespace CityDiscovery.ReviewService.Infrastructure.MessageBus.Consumers

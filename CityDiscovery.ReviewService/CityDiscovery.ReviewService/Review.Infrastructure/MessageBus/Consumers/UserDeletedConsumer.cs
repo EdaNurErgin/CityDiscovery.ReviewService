@@ -1,5 +1,5 @@
 ﻿using CityDiscovery.ReviewService.Domain.Interfaces;
-using CityDiscovery.ReviewService.Shared.Events;
+using CityDiscovery.ReviewService.ReviewService.Shared.Events.Identity;
 using MassTransit;
 
 namespace CityDiscovery.ReviewService.Infrastructure.MessageBus.Consumers;

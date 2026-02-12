@@ -1,5 +1,6 @@
 ﻿using CityDiscovery.ReviewService.Domain.Interfaces;
-using CityDiscovery.ReviewService.Shared.Events;
+using CityDiscovery.ReviewService.ReviewService.Shared.Events.Review;
+using CityDiscovery.VenueService.VenuesService.Shared.Common.Events.Review;
 using MassTransit;
 using MediatR;
 

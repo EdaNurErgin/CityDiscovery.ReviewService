@@ -3,8 +3,8 @@ using CityDiscovery.ReviewService.Domain.Entities;
 using CityDiscovery.ReviewService.Domain.Interfaces;
 using CityDiscovery.ReviewService.Review.Application.Interfaces;
 using MediatR;
-using CityDiscovery.ReviewService.Shared.Events; 
-using MassTransit; 
+using MassTransit;
+using CityDiscovery.ReviewService.ReviewService.Shared.Events.Venue;
 
 namespace CityDiscovery.ReviewService.Application.Favorites.Commands.AddFavorite;
 

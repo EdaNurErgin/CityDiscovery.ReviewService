@@ -89,4 +89,22 @@ public class ReviewRepository : IReviewRepository
     {
         return _context.SaveChangesAsync(cancellationToken);
     }
+
+    // Venue silindiğinde o mekana ait tüm yorumları siler
+    public async Task DeleteReviewsByVenueAsync(Guid venueId, CancellationToken cancellationToken = default)
+    {
+        // 1. O mekana ait yorumları bul
+        var reviews = await _context.Reviews
+            .Where(r => r.VenueId == venueId)
+            .ToListAsync(cancellationToken);
+
+        if (reviews.Any())
+        {
+            // 2. Hepsini silme listesine ekle
+            _context.Reviews.RemoveRange(reviews);
+
+            // 3. Veritabanına yansıt
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

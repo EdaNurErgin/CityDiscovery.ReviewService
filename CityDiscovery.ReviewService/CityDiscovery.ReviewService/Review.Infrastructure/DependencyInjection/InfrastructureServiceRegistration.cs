@@ -1,15 +1,15 @@
 ﻿using CityDiscovery.ReviewService.Application.Interfaces;
+using CityDiscovery.ReviewService.Consumers;
 using CityDiscovery.ReviewService.Domain.Interfaces;
 using CityDiscovery.ReviewService.Infrastructure.Data;
 using CityDiscovery.ReviewService.Infrastructure.ExternalServices;
+using CityDiscovery.ReviewService.Infrastructure.MessageBus.Consumers;
 using CityDiscovery.ReviewService.Infrastructure.Security;
 using CityDiscovery.ReviewService.Review.Application.Interfaces;
 using CityDiscovery.ReviewService.Review.Infrastructure.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using CityDiscovery.ReviewService.Infrastructure.MessageBus.Consumers;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace CityDiscovery.ReviewService.Infrastructure.DependencyInjection;
 
@@ -54,7 +54,7 @@ public static class InfrastructureServiceRegistration
             x.AddConsumer<VenueDeletedConsumer>();
             x.AddConsumer<UserDeletedConsumer>();
             x.AddConsumer<UserUpdatedConsumer>();
-
+            x.AddConsumer<ContentRemovedConsumer>();
             x.UsingRabbitMq((context, cfg) =>
             {
                 var host = configuration["RabbitMQ:Host"] ?? "localhost";
@@ -67,6 +67,14 @@ public static class InfrastructureServiceRegistration
                     h.Password(pass);
                 });
 
+                cfg.ReceiveEndpoint("review-service-venue-deleted", e =>
+                {
+                    e.ConfigureConsumer<VenueDeletedConsumer>(context);
+                });
+                cfg.ReceiveEndpoint("content-removed-review-queue", e =>
+                {
+                    e.ConfigureConsumer<ContentRemovedConsumer>(context);
+                });
                 cfg.ConfigureEndpoints(context);
             });
         });
