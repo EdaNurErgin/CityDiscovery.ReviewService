@@ -121,4 +121,14 @@ public class ReviewRepository : IReviewRepository
             await _context.SaveChangesAsync(cancellationToken);
         }
     }
+
+    // ReviewRepository.cs içine ekle
+    public async Task<List<Guid>> GetReviewedVenueIdsByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Reviews
+            .Where(r => r.UserId == userId)
+            .Select(r => r.VenueId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
+    }
 }

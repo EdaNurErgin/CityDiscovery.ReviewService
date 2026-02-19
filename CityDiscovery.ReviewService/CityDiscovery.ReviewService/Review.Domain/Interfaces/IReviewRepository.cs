@@ -17,5 +17,7 @@ public interface IReviewRepository
     Task DeleteReviewsByVenueAsync(Guid venueId, CancellationToken cancellationToken = default);
     Task DeleteReviewsByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
 
+    Task<List<Guid>> GetReviewedVenueIdsByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+
 
 }
