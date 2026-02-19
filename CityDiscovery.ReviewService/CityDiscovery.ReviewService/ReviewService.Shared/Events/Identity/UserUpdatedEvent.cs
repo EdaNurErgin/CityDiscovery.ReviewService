@@ -1,4 +1,4 @@
-﻿namespace CityDiscovery.ReviewService.ReviewService.Shared.Events.Identity
+﻿namespace IdentityService.Shared.MessageBus.Identity
 {
     public class UserUpdatedEvent
     {

@@ -42,4 +42,18 @@ public class FavoriteVenueRepository : IFavoriteVenueRepository
         _context.FavoriteVenues.Remove(entity);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    // Sınıfın içine ekle:
+    public async Task DeleteFavoritesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var favorites = await _context.FavoriteVenues
+            .Where(f => f.UserId == userId)
+            .ToListAsync(cancellationToken);
+
+        if (favorites.Any())
+        {
+            _context.FavoriteVenues.RemoveRange(favorites);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

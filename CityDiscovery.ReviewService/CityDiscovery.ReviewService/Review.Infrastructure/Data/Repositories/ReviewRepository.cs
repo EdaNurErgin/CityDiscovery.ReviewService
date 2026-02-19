@@ -107,4 +107,18 @@ public class ReviewRepository : IReviewRepository
             await _context.SaveChangesAsync(cancellationToken);
         }
     }
+
+    // Sınıfın içine, en alta veya uygun bir yere ekle:
+    public async Task DeleteReviewsByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var reviews = await _context.Reviews
+            .Where(r => r.UserId == userId)
+            .ToListAsync(cancellationToken);
+
+        if (reviews.Any())
+        {
+            _context.Reviews.RemoveRange(reviews);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
 }

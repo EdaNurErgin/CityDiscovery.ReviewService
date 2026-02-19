@@ -15,6 +15,7 @@ public interface IReviewRepository
     Task<(double AverageRating, int ReviewCount)> GetVenueRatingStatsAsync(Guid venueId, CancellationToken cancellationToken);
     Task SaveChangesAsync(CancellationToken cancellationToken);
     Task DeleteReviewsByVenueAsync(Guid venueId, CancellationToken cancellationToken = default);
+    Task DeleteReviewsByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
 
 
 }

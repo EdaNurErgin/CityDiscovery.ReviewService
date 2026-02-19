@@ -9,4 +9,5 @@ public interface IFavoriteVenueRepository
 
     Task AddAsync(FavoriteVenue favorite, CancellationToken cancellationToken = default);
     Task RemoveAsync(Guid userId, Guid venueId, CancellationToken cancellationToken = default);
+    Task DeleteFavoritesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
 }
