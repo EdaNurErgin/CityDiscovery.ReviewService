@@ -1,7 +1,7 @@
 ﻿using CityDiscovery.AdminNotificationService.Shared.Common.Events.AdminNotification;
 using CityDiscovery.ReviewService.Infrastructure.Data; 
 using MassTransit;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace CityDiscovery.ReviewService.Consumers
 {

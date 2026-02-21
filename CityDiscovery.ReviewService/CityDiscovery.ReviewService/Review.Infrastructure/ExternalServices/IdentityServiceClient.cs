@@ -1,9 +1,6 @@
 ﻿using CityDiscovery.ReviewService.Review.Application.DTOs;
 using CityDiscovery.ReviewService.Review.Application.Interfaces;
-using Microsoft.AspNetCore.Http; // Eklendi
-using System.Net.Http;
-using System.Net.Http.Headers; // Eklendi
-using System.Net.Http.Json;
+
 
 namespace CityDiscovery.ReviewService.Infrastructure.ExternalServices;
 

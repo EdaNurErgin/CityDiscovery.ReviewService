@@ -19,21 +19,21 @@ namespace CityDiscovery.ReviewService.Application.Reviews.Commands.DeleteReview
 
         public async Task Handle(DeleteReviewCommand request, CancellationToken cancellationToken)
         {
-            // 1. Yorumu veritabanından bul
+            //  Yorumu veritabanından bul
             var review = await _reviewRepository.GetByIdAsync(request.ReviewId, cancellationToken);
 
             if (review == null)
                 throw new KeyNotFoundException($"Review with ID {request.ReviewId} not found.");
 
-            // 2. Yetki Kontrolü: Sadece yorum sahibi silebilir
+            //  Yetki Kontrolü: Sadece yorum sahibi silebilir
             if (review.UserId != request.UserId)
                 throw new UnauthorizedAccessException("You can only delete your own review.");
 
-            // 3. Yorumu Sil (Bu metodun Repository'de olması şart, aşağıda ekleyeceğiz)
+            //  Yorumu Sil (Bu metodun Repository'de olması şart, aşağıda ekleyeceğiz)
             _reviewRepository.Remove(review);
             await _reviewRepository.SaveChangesAsync(cancellationToken);
 
-            // 4. KRİTİK: Ortalama Puanı Tekrar Hesapla (Mekan için)
+            // Ortalama Puanı Tekrar Hesapla (Mekan için)
             var stats = await _reviewRepository.GetVenueRatingStatsAsync(review.VenueId, cancellationToken);
 
             // 5. Venue Service'e Haber Ver (Mekan Puanını Düşür/Güncelle)

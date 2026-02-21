@@ -21,14 +21,6 @@ public class VenueDeletedConsumer : IConsumer<VenueDeletedEvent>
         var venueId = context.Message.VenueId;
 
 
-        // Repository üzerinden silme işlemleri (Senaryo gereği)
-        // await _reviewRepository.DeleteByVenueIdAsync(venueId);
-        
-
-        // --- DÜZELTME BURADA ---
-        // 1. Yorum satırlarını kaldırdık.
-        // 2. Metot ismini Repository'ye eklediğimiz 'DeleteReviewsByVenueAsync' ile eşleştirdik.
-        // 3. CancellationToken ekledik.
         await _reviewRepository.DeleteReviewsByVenueAsync(venueId, context.CancellationToken);
 
 

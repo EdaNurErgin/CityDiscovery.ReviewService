@@ -1,7 +1,6 @@
 ﻿using CityDiscovery.ReviewService.Domain.Entities;
 using CityDiscovery.ReviewService.Domain.Interfaces;
 using CityDiscovery.ReviewService.Infrastructure.Data;
-using CityDiscovery.ReviewService.Review.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace CityDiscovery.ReviewService.Review.Infrastructure.Data.Repositories;
@@ -43,7 +42,7 @@ public class FavoriteVenueRepository : IFavoriteVenueRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    // Sınıfın içine ekle:
+   
     public async Task DeleteFavoritesByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var favorites = await _context.FavoriteVenues

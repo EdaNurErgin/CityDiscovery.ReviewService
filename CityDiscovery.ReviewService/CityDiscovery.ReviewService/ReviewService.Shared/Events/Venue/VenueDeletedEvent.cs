@@ -1,8 +1,6 @@
 ﻿namespace CityDiscovery.VenueService.VenuesService.Shared.Common.Events.Venue
 {
-    // Venue Service ile birebir aynı yapıda olmalı.
-    // Interface (: IIntegrationEvent) sende yoksa silebilirsin, sorun olmaz.
-    // Önemli olan Property isimleri ve tipleridir.
+   
 
     public class VenueDeletedEvent
     {

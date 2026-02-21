@@ -124,21 +124,15 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Delete(Guid id)
     {
-        // Token'dan UserId'yi alıyoruz (Güvenlik için)
-        // Not: HttpContext.Items yerine User.FindFirst kullanımı daha standarttır ancak
-        // eğer JwtConfiguration middleware'iniz Items'a atıyorsa oradan da alabilirsiniz.
-        // Aşağıdaki kod User.Claims üzerinden standart okuma yapar.
+      
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        // Alternatif: Middleware ile Items'a attıysanız:
-        // if (HttpContext.Items.TryGetValue("UserId", out var userIdObj) && userIdObj is Guid uid) { userId = uid; }
 
         if (string.IsNullOrEmpty(userIdClaim))
             return Unauthorized();
 
         var userId = Guid.Parse(userIdClaim);
 
-        // DÜZELTME BURADA: Mediator (Tip) yerine _mediator (Field) kullanılmalı
+        //  Mediator (Tip) yerine _mediator (Field) kullanılmalı
         await _mediator.Send(new DeleteReviewCommand(id, userId));
 
         return NoContent();

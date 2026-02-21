@@ -1,7 +1,6 @@
 ﻿using CityDiscovery.ReviewService.Domain.Entities;
 using CityDiscovery.ReviewService.Domain.Interfaces;
 using CityDiscovery.ReviewService.Infrastructure.Data;
-using CityDiscovery.ReviewService.Review.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace CityDiscovery.ReviewService.Review.Infrastructure.Data.Repositories;
@@ -41,27 +40,16 @@ public class ReviewRepository : IReviewRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+
     public async Task UpdateReviewerDetailsAsync(Guid userId, string newUserName, string newAvatarUrl)
     {
-        // Bu kullanıcının yaptığı tüm yorumları bul
-        var reviews = await _context.Reviews
+        // ExecuteUpdateAsync ile o kullanıcıya ait tüm yorumların yazar bilgilerini
+        // veritabanına tek bir sorgu atarak (çok daha performanslı şekilde) güncelliyoruz.
+        await _context.Reviews
             .Where(r => r.UserId == userId)
-            .ToListAsync();
-
-        if (reviews.Any())
-        {
-            foreach (var review in reviews)
-            {
-                // Review entity'nizde bu alanlar varsa güncelle:
-                // review.ReviewerUserName = newUserName;
-                // review.ReviewerAvatarUrl = newAvatarUrl;
-
-                // Not: Eğer Review entity'nizde henüz bu kolonlar yoksa,
-                // önce Review.cs entity'sine ekleyip Migration almanız gerekir.
-            }
-
-            await _context.SaveChangesAsync();
-        }
+            .ExecuteUpdateAsync(s => s
+                .SetProperty(r => r.ReviewerUserName, newUserName)
+                .SetProperty(r => r.ReviewerAvatarUrl, newAvatarUrl));
     }
     // İçine ekle:
     public void Remove(Reviewx review)
@@ -108,7 +96,7 @@ public class ReviewRepository : IReviewRepository
         }
     }
 
-    // Sınıfın içine, en alta veya uygun bir yere ekle:
+    
     public async Task DeleteReviewsByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var reviews = await _context.Reviews
@@ -122,7 +110,7 @@ public class ReviewRepository : IReviewRepository
         }
     }
 
-    // ReviewRepository.cs içine ekle
+  
     public async Task<List<Guid>> GetReviewedVenueIdsByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         return await _context.Reviews

@@ -18,12 +18,14 @@ public sealed class GetVenueReviewsQueryHandler
     {
         var reviews = await _reviewRepository.GetVenueReviewsAsync(request.VenueId, cancellationToken);
 
-        // Şimdilik AutoMapper kullanmıyoruz, manuel map
+        
         return reviews.Select(r => new ReviewDto
         {
             Id = r.Id,
             VenueId = r.VenueId,
             UserId = r.UserId,
+            ReviewerUserName = r.ReviewerUserName,
+            ReviewerAvatarUrl = r.ReviewerAvatarUrl,
             Rating = r.Rating,
             Comment = r.Comment,
             CreatedAt = r.CreatedAt

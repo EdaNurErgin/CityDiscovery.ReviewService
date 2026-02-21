@@ -6,7 +6,7 @@ using CityDiscovery.ReviewService.API.Models.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+
 
 namespace CityDiscovery.ReviewService.API.Controllers;
 
