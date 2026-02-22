@@ -58,7 +58,7 @@ public sealed class CreateReviewCommandHandler
       
 
         // A) Veritabanından güncel ortalamayı ve yorum sayısını hesaplat
-        // (Bu metodu Repository'e eklemiştik)
+       
         var stats = await _reviewRepository.GetVenueRatingStatsAsync(request.VenueId, cancellationToken);
 
         // Venue Service'e haber ver
