@@ -1,5 +1,7 @@
 ﻿using CityDiscovery.ReviewService.Application.DependencyInjection;
+using CityDiscovery.ReviewService.Infrastructure.Data;
 using CityDiscovery.ReviewService.Infrastructure.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 namespace CityDiscovery.ReviewService
 {
@@ -71,6 +73,21 @@ namespace CityDiscovery.ReviewService
             builder.Services.AddHealthChecks();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var dbContext = services.GetRequiredService<ReviewDbContext>();
+                    dbContext.Database.Migrate();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while migrating the social database.");
+                }
+            }
 
             if (app.Environment.IsDevelopment())
             {
