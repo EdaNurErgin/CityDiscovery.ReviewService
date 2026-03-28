@@ -1,6 +1,9 @@
 ﻿using CityDiscovery.ReviewService.Application.DependencyInjection;
+using CityDiscovery.ReviewService.Application.Interfaces;
 using CityDiscovery.ReviewService.Infrastructure.Data;
 using CityDiscovery.ReviewService.Infrastructure.DependencyInjection;
+using CityDiscovery.ReviewService.Infrastructure.ExternalServices;
+using CityDiscovery.ReviewService.Review.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 namespace CityDiscovery.ReviewService
@@ -13,6 +16,30 @@ namespace CityDiscovery.ReviewService
 
             builder.Services.AddReviewInfrastructure(builder.Configuration);
             builder.Services.AddReviewApplication(builder.Configuration);
+
+            // --- HTTP CLIENT KAYITLARI ---
+            builder.Services.AddHttpClient<IVenueServiceClient, VenueServiceClient>(client =>
+            {
+                var url = builder.Configuration["ServiceUrls:VenueService"];
+                if (string.IsNullOrEmpty(url))
+                {
+                    throw new Exception("ServiceUrls:VenueService yapılandırması appsettings.json içinde bulunamadı!");
+                }
+                client.BaseAddress = new Uri(url);
+                Console.WriteLine($"[Review Service] VenueServiceClient Yapılandırıldı: {client.BaseAddress}");
+            });
+
+            builder.Services.AddHttpClient<IIdentityServiceClient, IdentityServiceClient>(client =>
+            {
+                var url = builder.Configuration["ServiceUrls:IdentityService"];
+                if (string.IsNullOrEmpty(url))
+                {
+                    throw new Exception("ServiceUrls:IdentityService yapılandırması appsettings.json içinde bulunamadı!");
+                }
+                client.BaseAddress = new Uri(url);
+                Console.WriteLine($"[Review Service] IdentityServiceClient Yapılandırıldı: {client.BaseAddress}");
+            });
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>

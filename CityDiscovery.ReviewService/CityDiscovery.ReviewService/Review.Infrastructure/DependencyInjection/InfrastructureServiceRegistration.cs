@@ -36,17 +36,17 @@ public static class InfrastructureServiceRegistration
         services.AddScoped<IFavoriteVenueRepository, FavoriteVenueRepository>();
         services.AddJwtAuthentication(configuration);
         // External Services (HTTP Clients)
-        services.AddHttpClient<IIdentityServiceClient, IdentityServiceClient>()
-            .ConfigureHttpClient(client =>
-            {
-                client.BaseAddress = new Uri(configuration["Services:Identity"]);
-            });
+        //services.AddHttpClient<IIdentityServiceClient, IdentityServiceClient>()
+        //    .ConfigureHttpClient(client =>
+        //    {
+        //        client.BaseAddress = new Uri(configuration["Services:Identity"]);
+        //    });
 
-        services.AddHttpClient<IVenueServiceClient, VenueServiceClient>()
-            .ConfigureHttpClient(client =>
-            {
-                client.BaseAddress = new Uri(configuration["Services:Venue"]);
-            });
+        //services.AddHttpClient<IVenueServiceClient, VenueServiceClient>()
+        //    .ConfigureHttpClient(client =>
+        //    {
+        //        client.BaseAddress = new Uri(configuration["Services:Venue"]);
+        //    });
         // --- MASSTRANSIT AYARLARI ---
         services.AddMassTransit(x =>
         {
